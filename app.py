@@ -1,12 +1,17 @@
 import streamlit as st
 
-st.title("AI Travel Concierge Assistant")
+st.set_page_config(page_title="AI Travel Assistant")
 
-st.write("Welcome! Ask travel-related questions and upload travel documents.")
+st.title("🌍 AI Travel Concierge Assistant")
 
-uploaded_file = st.file_uploader("Upload a travel document (PDF or TXT)", type=["pdf", "txt"])
+st.write("Plan your trips with AI!")
 
-user_input = st.text_input("Ask your travel question:")
+uploaded_file = st.file_uploader(
+    "Upload travel document",
+    type=["pdf","txt"]
+)
 
-if user_input:
-    st.write("You asked:", user_input)
+user_question = st.text_input("Ask a travel question")
+
+if user_question:
+    st.write("You asked:", user_question)

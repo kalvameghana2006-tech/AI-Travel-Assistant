@@ -1,4 +1,5 @@
 streamlit
 langchain
-openai
+langchain-groq
 pypdf
+faiss-cpu
