@@ -33,7 +33,6 @@ st.set_page_config(
     page_title="Wandr AI · Travel Concierge",
     page_icon="✈️",
     layout="wide",
-    initial_sidebar_state="expanded",
 )
 # ── THIRD-PARTY: DOCUMENT PROCESSING ─────────────────────────────────────────
 import PyPDF2
@@ -160,7 +159,9 @@ html, body, [class*="css"] {{
 }}
 
 #MainMenu, footer, header {{ visibility: hidden; }}
-
+[data-testid="stSidebar"] {{
+    display: none !important;
+}}
 /* ── HIDE SIDEBAR TOGGLE BUTTON ── */
 [data-testid="collapsedControl"],
 button[kind="header"],
@@ -171,16 +172,7 @@ button[kind="header"],
 
 .block-container {{ padding: 2rem 3rem 4rem; max-width: 1280px; }}
 
-/* ── SIDEBAR ── */
-[data-testid="stSidebar"] {{
-  background: linear-gradient(180deg,rgba(8,8,14,0.97) 0%,rgba(18,16,28,0.97) 100%) !important;
-  border-right: 1px solid var(--border) !important;
-  transition: transform 0.3s ease, width 0.3s ease !important;
-}}
-[data-testid="stSidebar"] .stMarkdown h3 {{
-  color: var(--accent) !important;
-  font-family: 'Playfair Display', serif;
-}}
+
 
 /* ── HERO ── */
 .hero-title {{
@@ -376,10 +368,9 @@ button[kind="header"],
 [data-testid="stExpander"] {{ background:var(--bg-card) !important; border:1px solid var(--border) !important; border-radius:10px !important; }}
 hr {{ border-color:var(--border) !important; margin:1.4rem 0 !important; }}
 label,
-.stMarkdown,
+
 .stMarkdown p,
-.stMarkdown div,
-.stMarkdown span,
+
 .stMarkdown li {{
     color: white !important;
 }}
@@ -596,88 +587,7 @@ for _k, _v in _defaults.items():
 # ── Apply CSS ─────────────────────────────────────────────────────────────────
 inject_css(st.session_state.bg_url)
 
-# ══════════════════════════════════════════════════════════════════════════════
-# SIDEBAR
-# ══════════════════════════════════════════════════════════════════════════════
-with st.sidebar:
-    st.markdown("""
-<div style="text-align:center;padding:20px 0 10px;">
-  <div style="font-family:'Playfair Display',serif;font-size:2rem;color:#d4a853;font-weight:700;">✈ Wandr</div>
-  <div style="font-size:.68rem;color:rgba(240,236,228,.35);letter-spacing:3px;text-transform:uppercase;margin-top:4px;">AI Travel Concierge</div>
-</div>
-<div style="display:flex;justify-content:center;margin-bottom:12px;">
-  <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(6,214,160,.12);border:1px solid rgba(6,214,160,.35);color:#06D6A0;border-radius:50px;padding:4px 13px;font-size:.73rem;font-weight:600;">
-    <span style="width:7px;height:7px;background:#06D6A0;border-radius:50%;display:inline-block;"></span>Online & Ready
-  </span>
-</div>
-""", unsafe_allow_html=True)
 
-    st.markdown("---")
-
-    # ── QUICK WEATHER
-    st.markdown("### 🌍 Quick Weather Check")
-    quick_city = st.text_input("City name", placeholder="e.g. Tokyo", key="sidebar_city")
-    if st.button("🌤️ Check Weather", use_container_width=True):
-        if not WEATHER_API_KEY:
-            st.warning("⚠️ Add WEATHER_API_KEY to your .env file")
-        elif quick_city.strip():
-            with st.spinner("Fetching from OpenWeatherMap…"):
-                wdata = get_weather(quick_city)
-            if wdata:
-                st.session_state.weather_data  = wdata
-                st.session_state.bg_url        = get_city_image(quick_city)
-                st.session_state.current_place = quick_city.title()
-                st.rerun()
-            else:
-                st.error("City not found!")
-        else:
-            st.warning("Enter a city name first")
-
-    st.markdown("---")
-
-    # ── QUICK DESTINATIONS
-    st.markdown("### 🎯 Quick Destinations")
-    quick_cities = [
-        ("Paris 🗼", "paris"), ("Tokyo 🌸", "tokyo"), ("Bali 🌴", "bali"),
-        ("Dubai 🏙️", "dubai"), ("Santorini 🌊", "santorini"), ("Kyoto ⛩️", "kyoto"),
-    ]
-    for label, city_key in quick_cities:
-        if st.button(label, use_container_width=True, key=f"quick_{city_key}"):
-            st.session_state.current_place = city_key.title()
-            st.session_state.bg_url        = get_city_image(city_key)
-            prompt = f"Plan a 5-day trip to {city_key.title()}"
-            st.session_state.chat_messages.append({"role": "user", "content": prompt})
-            if GROQ_API_KEY:
-                with st.spinner("Planning your trip…"):
-                    reply = get_travel_response(prompt, [])
-                st.session_state.chat_messages.append({"role": "assistant", "content": reply})
-                st.session_state.history.append({
-                    "query":     prompt,
-                    "response":  reply,
-                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
-                })
-            st.rerun()
-
-    st.markdown("---")
-
-    # ── STATS
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown(f'<div class="metric-box"><div class="metric-val">{len(st.session_state.history)}</div><div class="metric-label">Searches</div></div>', unsafe_allow_html=True)
-    with c2:
-        st.markdown(f'<div class="metric-box"><div class="metric-val">{len(st.session_state.saved_itineraries)}</div><div class="metric-label">Saved</div></div>', unsafe_allow_html=True)
-
-    if st.button("🧹 Clear All Session Data", use_container_width=True):
-        for k in ["chat_messages", "pdf_chunks", "current_place",
-                  "weather_data", "itinerary_result", "itinerary_dest", "history"]:
-            st.session_state[k] = [] if k in ["chat_messages", "history"] else None
-        st.session_state.bg_url = random.choice(UNSPLASH_FALLBACK)
-        st.rerun()
-
-    st.markdown(f"""
-<div style="font-size:.68rem;color:rgba(240,236,228,.28);text-align:center;letter-spacing:1px;margin-top:10px;">
-  WANDR AI · {datetime.now().strftime('%B %Y')}
-</div>""", unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -784,7 +694,7 @@ with tab_chat:
             st.markdown('</div>', unsafe_allow_html=True)
         with col_pdf_label:
             st.markdown(
-                '<div style="color:#000000;font-size:.72rem;padding-top:10px;">📎 Attach a PDF to ask questions from it (RAG)</div>',
+                '<div style="color:#FFD166;font-size:.72rem;padding-top:10px;">📎 Attach a PDF to ask questions from it (RAG)</div>',
                 unsafe_allow_html=True
             )
 
