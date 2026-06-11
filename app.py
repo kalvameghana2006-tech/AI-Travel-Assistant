@@ -349,6 +349,13 @@ button[kind="header"],
 .chat-pdf-uploader [data-testid="stFileUploadDropzone"] span {{
   color: #FFD166 !important;
 }}
+.chat-pdf-uploader {{
+    max-width: 160px !important;
+}}
+
+.chat-pdf-uploader [data-testid="stFileUploader"] {{
+    max-width: 160px !important;
+}}
 .chat-pdf-uploader [data-testid="stFileUploadDropzone"] small {{
   display: none !important;
 }}
@@ -356,6 +363,13 @@ button[kind="header"],
   font-size: .68rem !important;
   padding: 2px 8px !important;
   color: #FFD166 !important;
+}}
+.chat-pdf-uploader * {{
+    color: #FFD166 !important;
+}}
+
+.chat-pdf-uploader [data-testid="stFileUploader"] * {{
+    color: #FFD166 !important;
 }}
 
 /* ── TABS ── */
@@ -707,7 +721,7 @@ with tab_chat:
         with col_send:
             send_btn = st.button("✈️ Send Message", use_container_width=True)
         with col_clear:
-            if st.button("🗑️", use_container_width=True, help="Clear chat"):
+            if st.button("🗑️ Clear", use_container_width=True, help="Clear chat"):
                 st.session_state.chat_messages = []
                 st.rerun()
 
