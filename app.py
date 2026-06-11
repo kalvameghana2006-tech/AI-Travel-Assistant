@@ -176,6 +176,30 @@ html, body, [class*="css"] {{
 #MainMenu, footer, header {{ visibility: hidden; }}
 .block-container {{ padding: 2rem 3rem 4rem; max-width: 1280px; }}
 
+/* ── SIDEBAR TOGGLE FIX ── */
+[data-testid="collapsedControl"] {{
+  visibility: visible !important;
+  display: flex !important;
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 999;
+}}
+[data-testid="collapsedControl"] button {{
+  visibility: visible !important;
+  background: rgba(212,168,83,0.15) !important;
+  border: 1px solid rgba(212,168,83,0.35) !important;
+  border-radius: 8px !important;
+  color: #d4a853 !important;
+}}
+[data-testid="collapsedControl"] button:hover {{
+  background: rgba(212,168,83,0.28) !important;
+}}
+[data-testid="stSidebarCollapseButton"] button {{
+  visibility: visible !important;
+  color: #d4a853 !important;
+}}
+
 /* ── SIDEBAR ── */
 [data-testid="stSidebar"] {{
   background: linear-gradient(180deg,rgba(8,8,14,0.97) 0%,rgba(18,16,28,0.97) 100%) !important;
