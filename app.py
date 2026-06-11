@@ -173,7 +173,19 @@ html, body, [class*="css"] {{
   color: var(--text);
 }}
 
-#MainMenu, footer, header {{ visibility: hidden; }}
+#MainMenu, footer {{ visibility: hidden; }}
+header {{ visibility: hidden; }}
+header [data-testid="stSidebarCollapsedControl"],
+section[data-testid="stSidebarCollapsedControl"],
+button[kind="header"],
+[data-testid="collapsedControl"] {{
+  visibility: visible !important;
+  display: flex !important;
+  opacity: 1 !important;
+  pointer-events: all !important;
+  z-index: 9999 !important;
+  color: white !important;
+}}
 .block-container {{ padding: 2rem 3rem 4rem; max-width: 1280px; }}
 
 /* ── SIDEBAR ── */
