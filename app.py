@@ -162,17 +162,6 @@ html, body, [class*="css"] {{
 #MainMenu, footer, header {{ visibility: hidden; }}
 .block-container {{ padding: 2rem 3rem 4rem; max-width: 1280px; }}
 
-/* ── HIDE ALL NATIVE STREAMLIT SIDEBAR TOGGLE BUTTONS ── */
-[data-testid="collapsedControl"],
-[data-testid="stSidebarCollapseButton"],
-button[kind="header"],
-[data-testid="stSidebar"] > div:first-child > div:first-child > button {{
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}}
-
 /* ── SIDEBAR ── */
 [data-testid="stSidebar"] {{
   background: linear-gradient(180deg,rgba(8,8,14,0.97) 0%,rgba(18,16,28,0.97) 100%) !important;
@@ -182,45 +171,6 @@ button[kind="header"],
 [data-testid="stSidebar"] .stMarkdown h3 {{
   color: var(--accent) !important;
   font-family: 'Playfair Display', serif;
-}}
-
-/* ── HAMBURGER MENU BUTTON ── */
-#wandr-hamburger-btn {{
-  position: fixed;
-  top: 14px;
-  left: 14px;
-  z-index: 99999;
-  background: linear-gradient(135deg, #1a2235, #0d1a30);
-  border: 1px solid rgba(212,168,83,0.45);
-  border-radius: 10px;
-  width: 42px;
-  height: 42px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  cursor: pointer;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.45);
-  transition: all 0.2s ease;
-  user-select: none;
-  padding: 0;
-  outline: none;
-}}
-#wandr-hamburger-btn:hover {{
-  background: linear-gradient(135deg, #223050, #122040);
-  border-color: rgba(212,168,83,0.75);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 22px rgba(0,0,0,0.55);
-}}
-#wandr-hamburger-btn .bar {{
-  width: 20px;
-  height: 2px;
-  background: #d4a853;
-  border-radius: 2px;
-  transition: all 0.25s ease;
-  display: block;
-  pointer-events: none;
 }}
 
 /* ── HERO ── */
@@ -363,6 +313,39 @@ button[kind="header"],
 .stSelectbox > div > div {{ background:var(--bg-card2) !important; border:1px solid var(--border) !important; border-radius:10px !important; color:var(--text) !important; }}
 [data-testid="stFileUploader"] {{ background:var(--bg-card) !important; border:1px dashed rgba(212,168,83,.35) !important; border-radius:10px !important; padding:10px !important; }}
 
+/* ── COMPACT PDF UPLOADER IN CHAT ── */
+.chat-pdf-uploader [data-testid="stFileUploader"] {{
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}}
+.chat-pdf-uploader [data-testid="stFileUploader"] section {{
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}}
+.chat-pdf-uploader [data-testid="stFileUploader"] label {{
+  display: none !important;
+}}
+.chat-pdf-uploader [data-testid="stFileUploadDropzone"] {{
+  background: rgba(212,168,83,0.08) !important;
+  border: 1px solid rgba(212,168,83,0.35) !important;
+  border-radius: 10px !important;
+  padding: 6px 10px !important;
+  min-height: unset !important;
+}}
+.chat-pdf-uploader [data-testid="stFileUploadDropzone"] > div {{
+  gap: 4px !important;
+}}
+.chat-pdf-uploader [data-testid="stFileUploadDropzone"] p {{
+  font-size: .72rem !important;
+  color: var(--gold) !important;
+  margin: 0 !important;
+}}
+.chat-pdf-uploader [data-testid="stFileUploadDropzone"] small {{
+  display: none !important;
+}}
+
 /* ── TABS ── */
 .stTabs [data-baseweb="tab-list"] {{ background:var(--bg-card) !important; border-radius:12px !important; padding:.28rem !important; gap:.28rem !important; border:1px solid var(--border) !important; }}
 .stTabs [data-baseweb="tab"] {{ background:transparent !important; color:var(--muted) !important; border-radius:8px !important; font-family:'DM Sans',sans-serif !important; font-weight:500 !important; font-size:.88rem !important; padding:.45rem 1.1rem !important; }}
@@ -393,140 +376,6 @@ label,
 ::-webkit-scrollbar {{ width:4px; }}
 ::-webkit-scrollbar-thumb {{ background:var(--primary); border-radius:2px; }}
 </style>
-
-<!-- ── HAMBURGER: button element + addEventListener (works in Streamlit Cloud iframe) ── -->
-<button id="wandr-hamburger-btn" title="Toggle Menu" aria-label="Toggle sidebar">
-  <span class="bar"></span>
-  <span class="bar"></span>
-  <span class="bar"></span>
-</button>
-
-<script>
-(function() {{
-  var isOpen = true;
-
-  function toggleSidebar() {{
-    var btn = document.getElementById('wandr-hamburger-btn');
-
-    // Strategy 1: click the native Streamlit sidebar button (all known selectors)
-    var selectors = [
-      '[data-testid="collapsedControl"]',
-      '[data-testid="stSidebarCollapseButton"]',
-      'button[aria-label="Close sidebar"]',
-      'button[aria-label="Open sidebar"]',
-      'button[aria-label="collapse sidebar"]',
-      'button[aria-label="expand sidebar"]',
-      '[data-testid="stSidebar"] > div > button',
-      'section[data-testid="stSidebar"] button:first-of-type',
-    ];
-
-    var clicked = false;
-    for (var i = 0; i < selectors.length; i++) {{
-      var el = document.querySelector(selectors[i]);
-      if (el) {{
-        el.click();
-        clicked = true;
-        break;
-      }}
-    }}
-
-    // Strategy 2: directly manipulate sidebar styles if no native button found
-    if (!clicked) {{
-      var sidebar = document.querySelector('[data-testid="stSidebar"]');
-      if (sidebar) {{
-        if (isOpen) {{
-          sidebar.style.width = '0';
-          sidebar.style.minWidth = '0';
-          sidebar.style.overflow = 'hidden';
-          sidebar.style.transform = 'translateX(-300px)';
-          sidebar.style.transition = 'all 0.3s ease';
-          isOpen = false;
-        }} else {{
-          sidebar.style.width = '';
-          sidebar.style.minWidth = '';
-          sidebar.style.overflow = '';
-          sidebar.style.transform = '';
-          isOpen = true;
-        }}
-      }}
-    }}
-
-    // Animate hamburger bars
-    if (btn) {{
-      btn.classList.toggle('open');
-      var bars = btn.querySelectorAll('.bar');
-      if (btn.classList.contains('open')) {{
-        if (bars[0]) bars[0].style.cssText = 'transform: translateY(7px) rotate(45deg);';
-        if (bars[1]) bars[1].style.cssText = 'opacity: 0; transform: scaleX(0);';
-        if (bars[2]) bars[2].style.cssText = 'transform: translateY(-7px) rotate(-45deg);';
-      }} else {{
-        if (bars[0]) bars[0].style.cssText = '';
-        if (bars[1]) bars[1].style.cssText = '';
-        if (bars[2]) bars[2].style.cssText = '';
-      }}
-    }}
-  }}
-
-  function attachHamburger() {{
-    var btn = document.getElementById('wandr-hamburger-btn');
-    if (btn) {{
-      // Remove any existing listener before adding to avoid duplicates
-      btn.removeEventListener('click', toggleSidebar);
-      btn.addEventListener('click', toggleSidebar);
-    }} else {{
-      // Button not yet in DOM, retry
-      setTimeout(attachHamburger, 200);
-    }}
-  }}
-
-  function observeSidebarState() {{
-    var sidebar = document.querySelector('[data-testid="stSidebar"]');
-    if (!sidebar) {{
-      setTimeout(observeSidebarState, 500);
-      return;
-    }}
-    var observer = new MutationObserver(function(mutations) {{
-      mutations.forEach(function(m) {{
-        if (m.type === 'attributes') {{
-          var expanded = sidebar.getAttribute('aria-expanded');
-          var btn = document.getElementById('wandr-hamburger-btn');
-          if (btn) {{
-            if (expanded === 'false') {{
-              btn.classList.add('open');
-              isOpen = false;
-            }} else {{
-              btn.classList.remove('open');
-              isOpen = true;
-            }}
-          }}
-        }}
-      }});
-    }});
-    observer.observe(sidebar, {{ attributes: true, attributeFilter: ['aria-expanded', 'style'] }});
-  }}
-
-  if (document.readyState === 'loading') {{
-    document.addEventListener('DOMContentLoaded', function() {{
-      attachHamburger();
-      observeSidebarState();
-    }});
-  }} else {{
-    attachHamburger();
-    observeSidebarState();
-  }}
-
-  // Re-attach after Streamlit rerenders (it replaces DOM nodes)
-  var bodyObserver = new MutationObserver(function() {{
-    var btn = document.getElementById('wandr-hamburger-btn');
-    if (btn && !btn._wandrAttached) {{
-      btn.addEventListener('click', toggleSidebar);
-      btn._wandrAttached = true;
-    }}
-  }});
-  bodyObserver.observe(document.body, {{ childList: true, subtree: true }});
-
-}})();
-</script>
 """, unsafe_allow_html=True)
 
 
@@ -727,7 +576,7 @@ for _k, _v in _defaults.items():
     if _k not in st.session_state:
         st.session_state[_k] = _v
 
-# ── Apply CSS + Hamburger ─────────────────────────────────────────────────────
+# ── Apply CSS ─────────────────────────────────────────────────────────────────
 inject_css(st.session_state.bg_url)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -745,36 +594,6 @@ with st.sidebar:
   </span>
 </div>
 """, unsafe_allow_html=True)
-
-    st.markdown("---")
-
-    # ── PDF UPLOAD
-    st.markdown("### 📄 Travel Document (PDF)")
-    uploaded_file = st.file_uploader(
-        "Upload PDF (itinerary, visa docs, guides…)",
-        type="pdf",
-        label_visibility="collapsed",
-    )
-    if uploaded_file and st.session_state.pdf_chunks is None:
-        with st.spinner("📄 Indexing PDF with PyPDF2 + LangChain RAG…"):
-            chunks = index_pdf(uploaded_file.read())
-            if chunks:
-                st.session_state.pdf_chunks     = chunks
-                st.session_state.pdf_page_count = len(chunks)
-                st.success(f"✅ Indexed {len(chunks)} chunks (RAG ready)")
-            else:
-                st.error("❌ Could not extract text from PDF")
-
-    if st.session_state.pdf_chunks:
-        st.markdown(
-            f'<span class="status-badge status-pdf">📄 PDF Loaded — '
-            f'{st.session_state.pdf_page_count} RAG chunks</span>',
-            unsafe_allow_html=True,
-        )
-        if st.button("🗑️ Remove PDF", use_container_width=True):
-            st.session_state.pdf_chunks     = None
-            st.session_state.pdf_page_count = 0
-            st.rerun()
 
     st.markdown("---")
 
@@ -920,19 +739,56 @@ with tab_chat:
         chat_html += "</div>"
         st.markdown(chat_html, unsafe_allow_html=True)
 
+        # ── CHAT INPUT ROW: text input + PDF upload button + clear
         user_input = st.text_input(
             "Question",
             placeholder="e.g. What are the top 5 things to do in Bali? / Ask about your uploaded PDF…",
             label_visibility="collapsed",
             key="chat_input",
         )
-        col_send, col_clear = st.columns([3, 1])
+
+        col_send, col_pdf, col_clear = st.columns([3, 1.4, 0.8])
         with col_send:
             send_btn = st.button("✈️ Send Message", use_container_width=True)
+        with col_pdf:
+            # Compact PDF uploader tucked in chat area
+            st.markdown('<div class="chat-pdf-uploader">', unsafe_allow_html=True)
+            chat_pdf = st.file_uploader(
+                "📄 PDF",
+                type="pdf",
+                key="chat_pdf_upload",
+                label_visibility="collapsed",
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
+            # Process newly uploaded PDF
+            if chat_pdf is not None and st.session_state.pdf_chunks is None:
+                with st.spinner("📄 Indexing PDF…"):
+                    chunks = index_pdf(chat_pdf.read())
+                if chunks:
+                    st.session_state.pdf_chunks     = chunks
+                    st.session_state.pdf_page_count = len(chunks)
+                    st.success(f"✅ {len(chunks)} chunks indexed")
+                else:
+                    st.error("❌ Could not extract text")
         with col_clear:
-            if st.button("🗑️ Clear", use_container_width=True):
+            if st.button("🗑️", use_container_width=True, help="Clear chat"):
                 st.session_state.chat_messages = []
                 st.rerun()
+
+        # Show PDF status chip if loaded
+        if st.session_state.pdf_chunks:
+            col_pstatus, col_premove = st.columns([3, 1])
+            with col_pstatus:
+                st.markdown(
+                    f'<span class="status-badge status-pdf">📄 PDF Loaded — '
+                    f'{st.session_state.pdf_page_count} RAG chunks</span>',
+                    unsafe_allow_html=True,
+                )
+            with col_premove:
+                if st.button("✖ Remove PDF", use_container_width=True, key="remove_chat_pdf"):
+                    st.session_state.pdf_chunks     = None
+                    st.session_state.pdf_page_count = 0
+                    st.rerun()
 
         if send_btn and user_input.strip():
             if not GROQ_API_KEY:
@@ -1214,6 +1070,10 @@ with tab_history:
     with ht1:
         history_rev = list(reversed(st.session_state.history))
         if history_rev:
+            # Clear history button
+            if st.button("🗑️ Clear History", key="clear_history_btn"):
+                st.session_state.history = []
+                st.rerun()
             for item in history_rev[:20]:
                 with st.expander(f"🔍 {item['query'][:65]} — {item['timestamp']}"):
                     st.markdown(item["response"])
