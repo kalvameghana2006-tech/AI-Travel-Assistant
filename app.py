@@ -162,12 +162,7 @@ html, body, [class*="css"] {{
 .block-container {{ padding: 2rem 3rem 4rem; max-width: 1280px; }}
 
 /* ── HIDE NATIVE STREAMLIT SIDEBAR TOGGLE (the arrow chevron button) ── */
-[data-testid="collapsedControl"] {{
-  display: none !important;
-}}
-button[kind="header"] {{
-  display: none !important;
-}}
+
 
 /* ── HAMBURGER MENU BUTTON ── */
 #wandr-hamburger {{
