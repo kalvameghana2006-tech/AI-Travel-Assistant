@@ -120,7 +120,7 @@ def get_city_image(city: str) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# CSS  (only change: hide native sidebar toggle + add hamburger menu)
+# CSS
 # ══════════════════════════════════════════════════════════════════════════════
 def inject_css(bg_url: str):
     st.markdown(f"""
@@ -161,11 +161,39 @@ html, body, [class*="css"] {{
 #MainMenu, footer, header {{ visibility: hidden; }}
 .block-container {{ padding: 2rem 3rem 4rem; max-width: 1280px; }}
 
-/* ── HIDE NATIVE STREAMLIT SIDEBAR TOGGLE (the arrow chevron button) ── */
+/* ── HIDE ALL NATIVE STREAMLIT SIDEBAR TOGGLE BUTTONS ── */
+[data-testid="collapsedControl"],
+[data-testid="stSidebarCollapseButton"],
+button[kind="header"],
+[data-testid="stSidebar"] > div:first-child > div:first-child > button {{
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}}
 
+/* ── SIDEBAR ── */
+[data-testid="stSidebar"] {{
+  background: linear-gradient(180deg,rgba(8,8,14,0.97) 0%,rgba(18,16,28,0.97) 100%) !important;
+  border-right: 1px solid var(--border) !important;
+  transition: transform 0.3s ease, width 0.3s ease !important;
+}}
+[data-testid="stSidebar"] .stMarkdown h3 {{
+  color: var(--accent) !important;
+  font-family: 'Playfair Display', serif;
+}}
+
+/* ── SIDEBAR COLLAPSED STATE (driven by checkbox) ── */
+#wandr-sidebar-toggle:checked ~ * [data-testid="stSidebar"],
+body.sidebar-collapsed [data-testid="stSidebar"] {{
+  width: 0 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  transform: translateX(-100%) !important;
+}}
 
 /* ── HAMBURGER MENU BUTTON ── */
-#wandr-hamburger {{
+#wandr-hamburger-label {{
   position: fixed;
   top: 14px;
   left: 14px;
@@ -183,39 +211,21 @@ html, body, [class*="css"] {{
   cursor: pointer;
   box-shadow: 0 4px 18px rgba(0,0,0,0.45);
   transition: all 0.2s ease;
+  user-select: none;
 }}
-#wandr-hamburger:hover {{
+#wandr-hamburger-label:hover {{
   background: linear-gradient(135deg, #223050, #122040);
   border-color: rgba(212,168,83,0.75);
   transform: translateY(-1px);
   box-shadow: 0 6px 22px rgba(0,0,0,0.55);
 }}
-#wandr-hamburger .bar {{
+#wandr-hamburger-label .bar {{
   width: 20px;
   height: 2px;
   background: #d4a853;
   border-radius: 2px;
   transition: all 0.25s ease;
-}}
-#wandr-hamburger.open .bar:nth-child(1) {{
-  transform: translateY(7px) rotate(45deg);
-}}
-#wandr-hamburger.open .bar:nth-child(2) {{
-  opacity: 0;
-  transform: scaleX(0);
-}}
-#wandr-hamburger.open .bar:nth-child(3) {{
-  transform: translateY(-7px) rotate(-45deg);
-}}
-
-/* ── SIDEBAR ── */
-[data-testid="stSidebar"] {{
-  background: linear-gradient(180deg,rgba(8,8,14,0.97) 0%,rgba(18,16,28,0.97) 100%) !important;
-  border-right: 1px solid var(--border) !important;
-}}
-[data-testid="stSidebar"] .stMarkdown h3 {{
-  color: var(--accent) !important;
-  font-family: 'Playfair Display', serif;
+  display: block;
 }}
 
 /* ── HERO ── */
@@ -389,47 +399,116 @@ label,
 ::-webkit-scrollbar-thumb {{ background:var(--primary); border-radius:2px; }}
 </style>
 
-<!-- ── HAMBURGER MENU BUTTON (replaces native Streamlit sidebar toggle) ── -->
-<div id="wandr-hamburger" onclick="toggleWandrSidebar()" title="Toggle Menu">
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
+<!-- ── HAMBURGER: Pure JS approach that polls for the button reliably on deployed apps ── -->
+<div id="wandr-hamburger-label" onclick="wandrToggleSidebar()" title="Toggle Menu">
+  <span class="bar"></span>
+  <span class="bar"></span>
+  <span class="bar"></span>
 </div>
 
 <script>
 (function() {{
-  function toggleWandrSidebar() {{
-    var btn = document.getElementById('wandr-hamburger');
-    // Find the native Streamlit sidebar collapse/expand button and click it
-    var nativeBtn = (
-      document.querySelector('[data-testid="collapsedControl"]') ||
-      document.querySelector('button[kind="header"]') ||
-      document.querySelector('[data-testid="stSidebarCollapseButton"]') ||
-      document.querySelector('section[data-testid="stSidebar"] button') ||
-      document.querySelector('button[aria-label="Close sidebar"]') ||
-      document.querySelector('button[aria-label="Open sidebar"]')
-    );
-    if (nativeBtn) {{
-      nativeBtn.click();
-      btn.classList.toggle('open');
-    }} else {{
-      // Fallback: directly toggle sidebar visibility
+  var isOpen = true;
+
+  function wandrToggleSidebar() {{
+    var btn = document.getElementById('wandr-hamburger-label');
+
+    // Strategy 1: Try all known Streamlit sidebar button selectors
+    var selectors = [
+      '[data-testid="collapsedControl"]',
+      '[data-testid="stSidebarCollapseButton"]',
+      'button[aria-label="Close sidebar"]',
+      'button[aria-label="Open sidebar"]',
+      'button[aria-label="collapse sidebar"]',
+      'button[aria-label="expand sidebar"]',
+      '[data-testid="stSidebar"] > div > button',
+      'section[data-testid="stSidebar"] button:first-of-type',
+    ];
+
+    var clicked = false;
+    for (var i = 0; i < selectors.length; i++) {{
+      var el = document.querySelector(selectors[i]);
+      if (el) {{
+        el.click();
+        clicked = true;
+        break;
+      }}
+    }}
+
+    // Strategy 2: If no native button found, directly hide/show sidebar via style
+    if (!clicked) {{
       var sidebar = document.querySelector('[data-testid="stSidebar"]');
       if (sidebar) {{
-        var isHidden = sidebar.style.display === 'none' || sidebar.getAttribute('aria-expanded') === 'false';
-        if (isHidden) {{
-          sidebar.style.display = '';
-          sidebar.style.width = '';
-          btn.classList.remove('open');
+        if (isOpen) {{
+          sidebar.style.cssText += '; width: 0 !important; min-width: 0 !important; overflow: hidden !important; transform: translateX(-300px) !important; transition: all 0.3s ease !important;';
+          isOpen = false;
         }} else {{
-          sidebar.style.display = 'none';
-          btn.classList.add('open');
+          sidebar.style.cssText = sidebar.style.cssText
+            .replace(/width:[^;]+;/g, '')
+            .replace(/min-width:[^;]+;/g, '')
+            .replace(/overflow:[^;]+;/g, '')
+            .replace(/transform:[^;]+;/g, '');
+          sidebar.style.removeProperty('width');
+          sidebar.style.removeProperty('min-width');
+          sidebar.style.removeProperty('overflow');
+          sidebar.style.removeProperty('transform');
+          isOpen = true;
         }}
       }}
     }}
+
+    // Animate hamburger bars
+    if (btn) {{
+      btn.classList.toggle('open');
+      var bars = btn.querySelectorAll('.bar');
+      if (btn.classList.contains('open')) {{
+        if (bars[0]) bars[0].style.cssText = 'transform: translateY(7px) rotate(45deg);';
+        if (bars[1]) bars[1].style.cssText = 'opacity: 0; transform: scaleX(0);';
+        if (bars[2]) bars[2].style.cssText = 'transform: translateY(-7px) rotate(-45deg);';
+      }} else {{
+        if (bars[0]) bars[0].style.cssText = '';
+        if (bars[1]) bars[1].style.cssText = '';
+        if (bars[2]) bars[2].style.cssText = '';
+      }}
+    }}
   }}
-  // Expose globally
-  window.toggleWandrSidebar = toggleWandrSidebar;
+
+  window.wandrToggleSidebar = wandrToggleSidebar;
+
+  // Also sync hamburger state when sidebar is toggled by other means
+  // (e.g. user resizes window, presses Escape, etc.)
+  function observeSidebarState() {{
+    var sidebar = document.querySelector('[data-testid="stSidebar"]');
+    if (!sidebar) {{
+      setTimeout(observeSidebarState, 500);
+      return;
+    }}
+    var observer = new MutationObserver(function(mutations) {{
+      mutations.forEach(function(m) {{
+        if (m.type === 'attributes' && m.attributeName === 'aria-expanded') {{
+          var expanded = sidebar.getAttribute('aria-expanded');
+          var btn = document.getElementById('wandr-hamburger-label');
+          if (btn) {{
+            if (expanded === 'false') {{
+              btn.classList.add('open');
+              isOpen = false;
+            }} else {{
+              btn.classList.remove('open');
+              isOpen = true;
+            }}
+          }}
+        }}
+      }});
+    }});
+    observer.observe(sidebar, {{ attributes: true, attributeFilter: ['aria-expanded', 'style'] }});
+  }}
+
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {{
+    document.addEventListener('DOMContentLoaded', observeSidebarState);
+  }} else {{
+    observeSidebarState();
+  }}
 }})();
 </script>
 """, unsafe_allow_html=True)
