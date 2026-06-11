@@ -175,16 +175,29 @@ html, body, [class*="css"] {{
 
 #MainMenu, footer {{ visibility: hidden; }}
 header {{ visibility: hidden; }}
-header [data-testid="stSidebarCollapsedControl"],
-section[data-testid="stSidebarCollapsedControl"],
-button[kind="header"],
-[data-testid="collapsedControl"] {{
+
+/* ── SIDEBAR TOGGLE: always visible even when header is hidden ── */
+[data-testid="stSidebarCollapsedControl"] {{
   visibility: visible !important;
   display: flex !important;
   opacity: 1 !important;
   pointer-events: all !important;
-  z-index: 9999 !important;
+  position: fixed !important;
+  top: 0.5rem !important;
+  left: 0.5rem !important;
+  z-index: 999999 !important;
+  background: rgba(26, 34, 53, 0.92) !important;
+  border: 1px solid rgba(255,107,53,0.4) !important;
+  border-radius: 8px !important;
+  padding: 4px !important;
+}}
+[data-testid="stSidebarCollapsedControl"] svg,
+[data-testid="stSidebarCollapsedControl"] button {{
+  visibility: visible !important;
   color: white !important;
+  fill: white !important;
+  stroke: white !important;
+  opacity: 1 !important;
 }}
 .block-container {{ padding: 2rem 3rem 4rem; max-width: 1280px; }}
 
