@@ -1,3 +1,4 @@
+
 """
 ╔══════════════════════════════════════════════════════════════════════╗
 ║        Wandr — AI Travel Concierge  |  app.py                       ║
@@ -183,17 +184,8 @@ button[kind="header"],
   font-family: 'Playfair Display', serif;
 }}
 
-/* ── SIDEBAR COLLAPSED STATE (driven by checkbox) ── */
-#wandr-sidebar-toggle:checked ~ * [data-testid="stSidebar"],
-body.sidebar-collapsed [data-testid="stSidebar"] {{
-  width: 0 !important;
-  min-width: 0 !important;
-  overflow: hidden !important;
-  transform: translateX(-100%) !important;
-}}
-
 /* ── HAMBURGER MENU BUTTON ── */
-#wandr-hamburger-label {{
+#wandr-hamburger-btn {{
   position: fixed;
   top: 14px;
   left: 14px;
@@ -212,20 +204,23 @@ body.sidebar-collapsed [data-testid="stSidebar"] {{
   box-shadow: 0 4px 18px rgba(0,0,0,0.45);
   transition: all 0.2s ease;
   user-select: none;
+  padding: 0;
+  outline: none;
 }}
-#wandr-hamburger-label:hover {{
+#wandr-hamburger-btn:hover {{
   background: linear-gradient(135deg, #223050, #122040);
   border-color: rgba(212,168,83,0.75);
   transform: translateY(-1px);
   box-shadow: 0 6px 22px rgba(0,0,0,0.55);
 }}
-#wandr-hamburger-label .bar {{
+#wandr-hamburger-btn .bar {{
   width: 20px;
   height: 2px;
   background: #d4a853;
   border-radius: 2px;
   transition: all 0.25s ease;
   display: block;
+  pointer-events: none;
 }}
 
 /* ── HERO ── */
@@ -399,21 +394,21 @@ label,
 ::-webkit-scrollbar-thumb {{ background:var(--primary); border-radius:2px; }}
 </style>
 
-<!-- ── HAMBURGER: Pure JS approach that polls for the button reliably on deployed apps ── -->
-<div id="wandr-hamburger-label" onclick="wandrToggleSidebar()" title="Toggle Menu">
+<!-- ── HAMBURGER: button element + addEventListener (works in Streamlit Cloud iframe) ── -->
+<button id="wandr-hamburger-btn" title="Toggle Menu" aria-label="Toggle sidebar">
   <span class="bar"></span>
   <span class="bar"></span>
   <span class="bar"></span>
-</div>
+</button>
 
 <script>
 (function() {{
   var isOpen = true;
 
-  function wandrToggleSidebar() {{
-    var btn = document.getElementById('wandr-hamburger-label');
+  function toggleSidebar() {{
+    var btn = document.getElementById('wandr-hamburger-btn');
 
-    // Strategy 1: Try all known Streamlit sidebar button selectors
+    // Strategy 1: click the native Streamlit sidebar button (all known selectors)
     var selectors = [
       '[data-testid="collapsedControl"]',
       '[data-testid="stSidebarCollapseButton"]',
@@ -435,23 +430,22 @@ label,
       }}
     }}
 
-    // Strategy 2: If no native button found, directly hide/show sidebar via style
+    // Strategy 2: directly manipulate sidebar styles if no native button found
     if (!clicked) {{
       var sidebar = document.querySelector('[data-testid="stSidebar"]');
       if (sidebar) {{
         if (isOpen) {{
-          sidebar.style.cssText += '; width: 0 !important; min-width: 0 !important; overflow: hidden !important; transform: translateX(-300px) !important; transition: all 0.3s ease !important;';
+          sidebar.style.width = '0';
+          sidebar.style.minWidth = '0';
+          sidebar.style.overflow = 'hidden';
+          sidebar.style.transform = 'translateX(-300px)';
+          sidebar.style.transition = 'all 0.3s ease';
           isOpen = false;
         }} else {{
-          sidebar.style.cssText = sidebar.style.cssText
-            .replace(/width:[^;]+;/g, '')
-            .replace(/min-width:[^;]+;/g, '')
-            .replace(/overflow:[^;]+;/g, '')
-            .replace(/transform:[^;]+;/g, '');
-          sidebar.style.removeProperty('width');
-          sidebar.style.removeProperty('min-width');
-          sidebar.style.removeProperty('overflow');
-          sidebar.style.removeProperty('transform');
+          sidebar.style.width = '';
+          sidebar.style.minWidth = '';
+          sidebar.style.overflow = '';
+          sidebar.style.transform = '';
           isOpen = true;
         }}
       }}
@@ -473,10 +467,18 @@ label,
     }}
   }}
 
-  window.wandrToggleSidebar = wandrToggleSidebar;
+  function attachHamburger() {{
+    var btn = document.getElementById('wandr-hamburger-btn');
+    if (btn) {{
+      // Remove any existing listener before adding to avoid duplicates
+      btn.removeEventListener('click', toggleSidebar);
+      btn.addEventListener('click', toggleSidebar);
+    }} else {{
+      // Button not yet in DOM, retry
+      setTimeout(attachHamburger, 200);
+    }}
+  }}
 
-  // Also sync hamburger state when sidebar is toggled by other means
-  // (e.g. user resizes window, presses Escape, etc.)
   function observeSidebarState() {{
     var sidebar = document.querySelector('[data-testid="stSidebar"]');
     if (!sidebar) {{
@@ -485,9 +487,9 @@ label,
     }}
     var observer = new MutationObserver(function(mutations) {{
       mutations.forEach(function(m) {{
-        if (m.type === 'attributes' && m.attributeName === 'aria-expanded') {{
+        if (m.type === 'attributes') {{
           var expanded = sidebar.getAttribute('aria-expanded');
-          var btn = document.getElementById('wandr-hamburger-label');
+          var btn = document.getElementById('wandr-hamburger-btn');
           if (btn) {{
             if (expanded === 'false') {{
               btn.classList.add('open');
@@ -503,12 +505,26 @@ label,
     observer.observe(sidebar, {{ attributes: true, attributeFilter: ['aria-expanded', 'style'] }});
   }}
 
-  // Wait for DOM to be ready
   if (document.readyState === 'loading') {{
-    document.addEventListener('DOMContentLoaded', observeSidebarState);
+    document.addEventListener('DOMContentLoaded', function() {{
+      attachHamburger();
+      observeSidebarState();
+    }});
   }} else {{
+    attachHamburger();
     observeSidebarState();
   }}
+
+  // Re-attach after Streamlit rerenders (it replaces DOM nodes)
+  var bodyObserver = new MutationObserver(function() {{
+    var btn = document.getElementById('wandr-hamburger-btn');
+    if (btn && !btn._wandrAttached) {{
+      btn.addEventListener('click', toggleSidebar);
+      btn._wandrAttached = true;
+    }}
+  }});
+  bodyObserver.observe(document.body, {{ childList: true, subtree: true }});
+
 }})();
 </script>
 """, unsafe_allow_html=True)
