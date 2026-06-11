@@ -160,6 +160,15 @@ html, body, [class*="css"] {{
 }}
 
 #MainMenu, footer, header {{ visibility: hidden; }}
+
+/* ── HIDE SIDEBAR TOGGLE BUTTON ── */
+[data-testid="collapsedControl"],
+button[kind="header"],
+.st-emotion-cache-1egp75f,
+[data-testid="stSidebarCollapseButton"] {{
+  display: none !important;
+}}
+
 .block-container {{ padding: 2rem 3rem 4rem; max-width: 1280px; }}
 
 /* ── SIDEBAR ── */
@@ -313,7 +322,7 @@ html, body, [class*="css"] {{
 .stSelectbox > div > div {{ background:var(--bg-card2) !important; border:1px solid var(--border) !important; border-radius:10px !important; color:var(--text) !important; }}
 [data-testid="stFileUploader"] {{ background:var(--bg-card) !important; border:1px dashed rgba(212,168,83,.35) !important; border-radius:10px !important; padding:10px !important; }}
 
-/* ── COMPACT PDF UPLOADER IN CHAT ── */
+/* ── COMPACT PDF UPLOADER IN CHAT (inside chat box) ── */
 .chat-pdf-uploader [data-testid="stFileUploader"] {{
   background: transparent !important;
   border: none !important;
@@ -331,19 +340,27 @@ html, body, [class*="css"] {{
   background: rgba(212,168,83,0.08) !important;
   border: 1px solid rgba(212,168,83,0.35) !important;
   border-radius: 10px !important;
-  padding: 6px 10px !important;
+  padding: 4px 8px !important;
   min-height: unset !important;
 }}
 .chat-pdf-uploader [data-testid="stFileUploadDropzone"] > div {{
-  gap: 4px !important;
+  gap: 2px !important;
 }}
 .chat-pdf-uploader [data-testid="stFileUploadDropzone"] p {{
-  font-size: .72rem !important;
-  color: var(--gold) !important;
+  font-size: .68rem !important;
+  color: #000000 !important;
   margin: 0 !important;
+}}
+.chat-pdf-uploader [data-testid="stFileUploadDropzone"] span {{
+  color: #000000 !important;
 }}
 .chat-pdf-uploader [data-testid="stFileUploadDropzone"] small {{
   display: none !important;
+}}
+.chat-pdf-uploader [data-testid="stFileUploadDropzone"] button {{
+  font-size: .68rem !important;
+  padding: 2px 8px !important;
+  color: #000000 !important;
 }}
 
 /* ── TABS ── */
@@ -739,7 +756,14 @@ with tab_chat:
         chat_html += "</div>"
         st.markdown(chat_html, unsafe_allow_html=True)
 
-        # ── CHAT INPUT ROW: text input + PDF upload button + clear
+        # ── CHAT INPUT BOX: text input row with PDF upload tucked inside
+        # Outer wrapper styled as a unified input box
+        st.markdown("""
+<div style="background:var(--bg-card2);border:1px solid var(--border);border-radius:14px;padding:10px 12px 6px 12px;margin-bottom:8px;">
+  <div style="font-size:.7rem;color:#8899AA;margin-bottom:4px;letter-spacing:.05em;">MESSAGE</div>
+</div>
+""", unsafe_allow_html=True)
+
         user_input = st.text_input(
             "Question",
             placeholder="e.g. What are the top 5 things to do in Bali? / Ask about your uploaded PDF…",
@@ -747,29 +771,37 @@ with tab_chat:
             key="chat_input",
         )
 
-        col_send, col_pdf, col_clear = st.columns([3, 1.4, 0.8])
-        with col_send:
-            send_btn = st.button("✈️ Send Message", use_container_width=True)
-        with col_pdf:
-            # Compact PDF uploader tucked in chat area
+        # PDF uploader sits directly below the text input, styled compactly
+        col_pdf_inline, col_pdf_label = st.columns([1, 4])
+        with col_pdf_inline:
             st.markdown('<div class="chat-pdf-uploader">', unsafe_allow_html=True)
             chat_pdf = st.file_uploader(
-                "📄 PDF",
+                "📎 PDF",
                 type="pdf",
                 key="chat_pdf_upload",
                 label_visibility="collapsed",
             )
             st.markdown('</div>', unsafe_allow_html=True)
-            # Process newly uploaded PDF
-            if chat_pdf is not None and st.session_state.pdf_chunks is None:
-                with st.spinner("📄 Indexing PDF…"):
-                    chunks = index_pdf(chat_pdf.read())
-                if chunks:
-                    st.session_state.pdf_chunks     = chunks
-                    st.session_state.pdf_page_count = len(chunks)
-                    st.success(f"✅ {len(chunks)} chunks indexed")
-                else:
-                    st.error("❌ Could not extract text")
+        with col_pdf_label:
+            st.markdown(
+                '<div style="color:#000000;font-size:.72rem;padding-top:10px;">📎 Attach a PDF to ask questions from it (RAG)</div>',
+                unsafe_allow_html=True
+            )
+
+        # Process newly uploaded PDF
+        if chat_pdf is not None and st.session_state.pdf_chunks is None:
+            with st.spinner("📄 Indexing PDF…"):
+                chunks = index_pdf(chat_pdf.read())
+            if chunks:
+                st.session_state.pdf_chunks     = chunks
+                st.session_state.pdf_page_count = len(chunks)
+                st.success(f"✅ {len(chunks)} chunks indexed")
+            else:
+                st.error("❌ Could not extract text")
+
+        col_send, col_clear = st.columns([4, 0.8])
+        with col_send:
+            send_btn = st.button("✈️ Send Message", use_container_width=True)
         with col_clear:
             if st.button("🗑️", use_container_width=True, help="Clear chat"):
                 st.session_state.chat_messages = []
@@ -1098,3 +1130,4 @@ with tab_history:
   <div style="font-size:2.5rem;">🗺️</div>
   <div style="color:#8899AA;margin-top:.5rem;">No saved itineraries yet. Generate one in the Itinerary tab!</div>
 </div>""", unsafe_allow_html=True)
+
