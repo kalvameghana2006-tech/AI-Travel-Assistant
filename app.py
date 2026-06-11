@@ -176,9 +176,6 @@ html, body, [class*="css"] {{
 #MainMenu, footer, header {{ visibility: hidden; }}
 .block-container {{ padding: 2rem 3rem 4rem; max-width: 1280px; }}
 
-/* ── SIDEBAR TOGGLE FIX ── */
-
-
 /* ── SIDEBAR ── */
 [data-testid="stSidebar"] {{
   background: linear-gradient(180deg,rgba(8,8,14,0.97) 0%,rgba(18,16,28,0.97) 100%) !important;
@@ -339,7 +336,41 @@ html, body, [class*="css"] {{
 .stError   {{ background:rgba(255,107,107,.1) !important; border-left:3px solid #FF6B6B !important; border-radius:8px !important; }}
 .stInfo    {{ background:rgba(0,78,137,.15) !important; border-left:3px solid #004e89 !important; border-radius:8px !important; }}
 .stWarning {{ background:rgba(255,209,102,.1) !important; border-left:3px solid var(--accent) !important; border-radius:8px !important; }}
-[data-testid="stExpander"] {{ background:var(--bg-card) !important; border:1px solid var(--border) !important; border-radius:10px !important; }}
+[data-testid="stExpander"] {{
+  background:var(--bg-card) !important;
+  border:1px solid var(--border) !important;
+  border-radius:10px !important;
+  visibility: visible !important;
+  display: block !important;
+}}
+[data-testid="stExpander"] > details {{
+  visibility: visible !important;
+  display: block !important;
+}}
+[data-testid="stExpander"] summary {{
+  visibility: visible !important;
+  display: flex !important;
+  color: white !important;
+  background: var(--bg-card) !important;
+  border-radius: 10px !important;
+  padding: 0.75rem 1rem !important;
+}}
+[data-testid="stExpander"] summary:hover {{
+  background: var(--bg-card2) !important;
+}}
+[data-testid="stExpander"] summary > * {{
+  color: white !important;
+}}
+[data-testid="stExpander"] summary svg {{
+  fill: white !important;
+  stroke: white !important;
+  color: white !important;
+}}
+[data-testid="stExpander"] summary p,
+[data-testid="stExpander"] summary span,
+[data-testid="stExpander"] summary div {{
+  color: white !important;
+}}
 hr {{ border-color:var(--border) !important; margin:1.4rem 0 !important; }}
 label,
 .stMarkdown,
