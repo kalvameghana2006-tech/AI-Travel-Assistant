@@ -316,20 +316,38 @@ button[kind="header"],
 
 /* ── COMPACT PDF UPLOADER IN CHAT (inside chat box) ── */
 /* PDF uploader */
-[data-testid="stFileUploader"] {{
-    background: #111827 !important;
-    border: 2px solid #FF6B35 !important;
-    border-radius: 15px !important;
-    padding: 15px !important;
+.chat-pdf-uploader [data-testid="stFileUploader"] {{
+    background:#1a2235 !important;
+    border:1px solid rgba(212,168,83,.35) !important;
+    border-radius:12px !important;
+    padding:10px !important;
 }}
 
-[data-testid="stFileUploadDropzone"] {{
-    background: #111827 !important;
-    border: none !important;
+.chat-pdf-uploader [data-testid="stFileUploader"] > div {{
+    background:#1a2235 !important;
 }}
 
-[data-testid="stFileUploadDropzone"] * {{
-    color: white !important;
+.chat-pdf-uploader [data-testid="stFileUploadDropzone"] {{
+    background:#1a2235 !important;
+    border:none !important;
+    color:#FFD166 !important;
+}}
+
+.chat-pdf-uploader [data-testid="stFileUploadDropzone"] * {{
+    background:transparent !important;
+    color:#FFD166 !important;
+}}
+
+.chat-pdf-uploader button {{
+    background:#FF6B35 !important;
+    color:white !important;
+    border:none !important;
+}}
+
+.chat-pdf-uploader small,
+.chat-pdf-uploader span,
+.chat-pdf-uploader p {{
+    color:#FFD166 !important;
 }}
 /* ── TABS ── */
 .stTabs [data-baseweb="tab-list"] {{ background:var(--bg-card) !important; border-radius:12px !important; padding:.28rem !important; gap:.28rem !important; border:1px solid var(--border) !important; }}
