@@ -315,63 +315,32 @@ button[kind="header"],
 [data-testid="stFileUploader"] {{ background:var(--bg-card) !important; border:1px dashed rgba(212,168,83,.35) !important; border-radius:10px !important; padding:10px !important; }}
 
 /* ── COMPACT PDF UPLOADER IN CHAT (inside chat box) ── */
-.chat-pdf-uploader [data-testid="stFileUploader"] {{
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-}}
-.chat-pdf-uploader [data-testid="stFileUploader"] section {{
-  padding: 0 !important;
-  border: none !important;
-  background: transparent !important;
-}}
-.chat-pdf-uploader [data-testid="stFileUploader"] label {{
-  display: none !important;
-}}
-.chat-pdf-uploader [data-testid="stFileUploadDropzone"] {{
-  background: #1a2235 !important;
-  border: 1px solid rgba(212,168,83,0.35) !important;
-  border-radius: 10px !important;
-
-  width: 150px !important;
-  min-height: 40px !important;
-
-  padding: 4px !important;
-}}
-.chat-pdf-uploader [data-testid="stFileUploadDropzone"] > div {{
-  gap: 2px !important;
-}}
-.chat-pdf-uploader [data-testid="stFileUploadDropzone"] p {{
-  font-size: .68rem !important;
-  color: #FFD166 !important;
-  margin: 0 !important;
-}}
-.chat-pdf-uploader [data-testid="stFileUploadDropzone"] span {{
-  color: #FFD166 !important;
-}}
-.chat-pdf-uploader {{
-    max-width: 160px !important;
+/* PDF uploader */
+.chat-pdf-uploader [data-testid="stFileUploader"]{{
+    background:#1a2235 !important;
+    border:1px solid rgba(212,168,83,.35) !important;
+    border-radius:12px !important;
+    padding:10px !important;
 }}
 
-.chat-pdf-uploader [data-testid="stFileUploader"] {{
-    max-width: 160px !important;
-}}
-.chat-pdf-uploader [data-testid="stFileUploadDropzone"] small {{
-  display: none !important;
-}}
-.chat-pdf-uploader [data-testid="stFileUploadDropzone"] button {{
-  font-size: .68rem !important;
-  padding: 2px 8px !important;
-  color: #FFD166 !important;
-}}
-.chat-pdf-uploader * {{
-    color: #FFD166 !important;
+.chat-pdf-uploader section{{
+    background:#1a2235 !important;
 }}
 
-.chat-pdf-uploader [data-testid="stFileUploader"] * {{
-    color: #FFD166 !important;
+.chat-pdf-uploader [data-testid="stFileUploadDropzone"]{{
+    background:#1a2235 !important;
+    border:none !important;
 }}
 
+.chat-pdf-uploader button{{
+    background:#FF6B35 !important;
+    color:white !important;
+    border:none !important;
+}}
+
+.chat-pdf-uploader *{{
+    color:#FFD166 !important;
+}}
 /* ── TABS ── */
 .stTabs [data-baseweb="tab-list"] {{ background:var(--bg-card) !important; border-radius:12px !important; padding:.28rem !important; gap:.28rem !important; border:1px solid var(--border) !important; }}
 .stTabs [data-baseweb="tab"] {{ background:transparent !important; color:var(--muted) !important; border-radius:8px !important; font-family:'DM Sans',sans-serif !important; font-weight:500 !important; font-size:.88rem !important; padding:.45rem 1.1rem !important; }}
