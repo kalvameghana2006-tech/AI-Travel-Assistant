@@ -672,7 +672,8 @@ with tab_chat:
         )
 
         # PDF uploader sits directly below the text input, styled compactly
-        st.markdown('<div class="chat-pdf-uploader">', unsafe_allow_html=True)
+        st.container(border=True)
+        
 
         chat_pdf = st.file_uploader(
     "📎 Attach PDF",
@@ -681,7 +682,7 @@ with tab_chat:
     label_visibility="collapsed",
 )
 
-        st.markdown('</div>', unsafe_allow_html=True)
+        
 
         # Process newly uploaded PDF
         if chat_pdf is not None and st.session_state.pdf_chunks is None:
