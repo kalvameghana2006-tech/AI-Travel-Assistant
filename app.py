@@ -329,7 +329,7 @@ button[kind="header"],
   display: none !important;
 }}
 .chat-pdf-uploader [data-testid="stFileUploadDropzone"] {{
-  background: rgba(212,168,83,0.08) !important;
+  background: #1a2235 !important;
   border: 1px solid rgba(212,168,83,0.35) !important;
   border-radius: 10px !important;
 
