@@ -177,28 +177,7 @@ html, body, [class*="css"] {{
 .block-container {{ padding: 2rem 3rem 4rem; max-width: 1280px; }}
 
 /* ── SIDEBAR TOGGLE FIX ── */
-[data-testid="collapsedControl"] {{
-  visibility: visible !important;
-  display: flex !important;
-  position: fixed;
-  top: 0.5rem;
-  left: 0.5rem;
-  z-index: 999;
-}}
-[data-testid="collapsedControl"] button {{
-  visibility: visible !important;
-  background: rgba(212,168,83,0.15) !important;
-  border: 1px solid rgba(212,168,83,0.35) !important;
-  border-radius: 8px !important;
-  color: #d4a853 !important;
-}}
-[data-testid="collapsedControl"] button:hover {{
-  background: rgba(212,168,83,0.28) !important;
-}}
-[data-testid="stSidebarCollapseButton"] button {{
-  visibility: visible !important;
-  color: #d4a853 !important;
-}}
+
 
 /* ── SIDEBAR ── */
 [data-testid="stSidebar"] {{
