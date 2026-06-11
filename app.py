@@ -173,32 +173,7 @@ html, body, [class*="css"] {{
   color: var(--text);
 }}
 
-#MainMenu, footer {{ visibility: hidden; }}
-header {{ visibility: hidden; }}
-
-/* ── SIDEBAR TOGGLE: always visible even when header is hidden ── */
-[data-testid="stSidebarCollapsedControl"] {{
-  visibility: visible !important;
-  display: flex !important;
-  opacity: 1 !important;
-  pointer-events: all !important;
-  position: fixed !important;
-  top: 0.5rem !important;
-  left: 0.5rem !important;
-  z-index: 999999 !important;
-  background: rgba(26, 34, 53, 0.92) !important;
-  border: 1px solid rgba(255,107,53,0.4) !important;
-  border-radius: 8px !important;
-  padding: 4px !important;
-}}
-[data-testid="stSidebarCollapsedControl"] svg,
-[data-testid="stSidebarCollapsedControl"] button {{
-  visibility: visible !important;
-  color: white !important;
-  fill: white !important;
-  stroke: white !important;
-  opacity: 1 !important;
-}}
+#MainMenu, footer, header {{ visibility: hidden; }}
 .block-container {{ padding: 2rem 3rem 4rem; max-width: 1280px; }}
 
 /* ── SIDEBAR ── */
@@ -361,41 +336,7 @@ header {{ visibility: hidden; }}
 .stError   {{ background:rgba(255,107,107,.1) !important; border-left:3px solid #FF6B6B !important; border-radius:8px !important; }}
 .stInfo    {{ background:rgba(0,78,137,.15) !important; border-left:3px solid #004e89 !important; border-radius:8px !important; }}
 .stWarning {{ background:rgba(255,209,102,.1) !important; border-left:3px solid var(--accent) !important; border-radius:8px !important; }}
-[data-testid="stExpander"] {{
-  background:var(--bg-card) !important;
-  border:1px solid var(--border) !important;
-  border-radius:10px !important;
-  visibility: visible !important;
-  display: block !important;
-}}
-[data-testid="stExpander"] > details {{
-  visibility: visible !important;
-  display: block !important;
-}}
-[data-testid="stExpander"] summary {{
-  visibility: visible !important;
-  display: flex !important;
-  color: white !important;
-  background: var(--bg-card) !important;
-  border-radius: 10px !important;
-  padding: 0.75rem 1rem !important;
-}}
-[data-testid="stExpander"] summary:hover {{
-  background: var(--bg-card2) !important;
-}}
-[data-testid="stExpander"] summary > * {{
-  color: white !important;
-}}
-[data-testid="stExpander"] summary svg {{
-  fill: white !important;
-  stroke: white !important;
-  color: white !important;
-}}
-[data-testid="stExpander"] summary p,
-[data-testid="stExpander"] summary span,
-[data-testid="stExpander"] summary div {{
-  color: white !important;
-}}
+[data-testid="stExpander"] {{ background:var(--bg-card) !important; border:1px solid var(--border) !important; border-radius:10px !important; }}
 hr {{ border-color:var(--border) !important; margin:1.4rem 0 !important; }}
 label,
 .stMarkdown,
