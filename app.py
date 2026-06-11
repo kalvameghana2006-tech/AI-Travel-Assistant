@@ -340,11 +340,11 @@ button[kind="header"],
 }}
 .chat-pdf-uploader [data-testid="stFileUploadDropzone"] p {{
   font-size: .68rem !important;
-  color: #000000 !important;
+  color: #FFD166 !important;
   margin: 0 !important;
 }}
 .chat-pdf-uploader [data-testid="stFileUploadDropzone"] span {{
-  color: #000000 !important;
+  color: #FFD166 !important;
 }}
 .chat-pdf-uploader [data-testid="stFileUploadDropzone"] small {{
   display: none !important;
@@ -352,7 +352,7 @@ button[kind="header"],
 .chat-pdf-uploader [data-testid="stFileUploadDropzone"] button {{
   font-size: .68rem !important;
   padding: 2px 8px !important;
-  color: #000000 !important;
+  color: #FFD166 !important;
 }}
 
 /* ── TABS ── */
@@ -668,11 +668,7 @@ with tab_chat:
 
         # ── CHAT INPUT BOX: text input row with PDF upload tucked inside
         # Outer wrapper styled as a unified input box
-        st.markdown("""
-<div style="background:var(--bg-card2);border:1px solid var(--border);border-radius:14px;padding:10px 12px 6px 12px;margin-bottom:8px;">
-  <div style="font-size:.7rem;color:#8899AA;margin-bottom:4px;letter-spacing:.05em;">MESSAGE</div>
-</div>
-""", unsafe_allow_html=True)
+        
 
         user_input = st.text_input(
             "Question",
@@ -682,7 +678,7 @@ with tab_chat:
         )
 
         # PDF uploader sits directly below the text input, styled compactly
-        col_pdf_inline, col_pdf_label = st.columns([1, 4])
+        col_pdf_inline, col_pdf_label = st.columns([0.4, 4.6])
         with col_pdf_inline:
             st.markdown('<div class="chat-pdf-uploader">', unsafe_allow_html=True)
             chat_pdf = st.file_uploader(
