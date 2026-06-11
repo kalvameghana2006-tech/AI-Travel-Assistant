@@ -332,8 +332,11 @@ button[kind="header"],
   background: rgba(212,168,83,0.08) !important;
   border: 1px solid rgba(212,168,83,0.35) !important;
   border-radius: 10px !important;
-  padding: 4px 8px !important;
-  min-height: unset !important;
+
+  width: 150px !important;
+  min-height: 40px !important;
+
+  padding: 4px !important;
 }}
 .chat-pdf-uploader [data-testid="stFileUploadDropzone"] > div {{
   gap: 2px !important;
@@ -678,21 +681,16 @@ with tab_chat:
         )
 
         # PDF uploader sits directly below the text input, styled compactly
-        col_pdf_inline, col_pdf_label = st.columns([0.4, 4.6])
-        with col_pdf_inline:
-            st.markdown('<div class="chat-pdf-uploader">', unsafe_allow_html=True)
-            chat_pdf = st.file_uploader(
-                "📎 PDF",
-                type="pdf",
-                key="chat_pdf_upload",
-                label_visibility="collapsed",
-            )
-            st.markdown('</div>', unsafe_allow_html=True)
-        with col_pdf_label:
-            st.markdown(
-                '<div style="color:#FFD166;font-size:.72rem;padding-top:10px;">📎 Attach a PDF to ask questions from it (RAG)</div>',
-                unsafe_allow_html=True
-            )
+        st.markdown('<div class="chat-pdf-uploader">', unsafe_allow_html=True)
+
+        chat_pdf = st.file_uploader(
+    "📎 Attach PDF",
+    type=["pdf"],
+    key="chat_pdf_upload",
+    label_visibility="collapsed",
+)
+
+        st.markdown('</div>', unsafe_allow_html=True)
 
         # Process newly uploaded PDF
         if chat_pdf is not None and st.session_state.pdf_chunks is None:
