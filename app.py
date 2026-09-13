@@ -430,7 +430,7 @@ def _weather_emoji(desc: str) -> str:
 def _build_llm(temperature: float = 0.7, max_tokens: int = 1200) -> ChatGroq:
     return ChatGroq(
         groq_api_key=GROQ_API_KEY,
-        model_name="llama-3.1-8b-instant",
+        model_name="openai/gpt-oss-20b",
         temperature=temperature,
         max_tokens=max_tokens,
     )
