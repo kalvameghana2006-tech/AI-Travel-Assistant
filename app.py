@@ -5,7 +5,7 @@
 ║  Tech Stack:                                                         ║
 ║  • Frontend  : Streamlit                                             ║
 ║  • Backend   : Python + LangChain (langchain-groq, langchain-core)  ║
-║  • LLM       : Groq  (llama-3.1-8b-instant)                         ║
+║  • LLM       : OpenAI GPT-OSS-20B (via Groq)                       ║
 ║  • Document  : PyPDF2                                                ║
 ║  • RAG       : Simple Retrieval-Augmented Generation                 ║
 ║  • Weather   : OpenWeatherMap REST API                               ║
