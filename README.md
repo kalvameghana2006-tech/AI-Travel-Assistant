@@ -15,21 +15,27 @@ Wandr AI is an AI-powered travel assistant that helps users discover destination
 
 ## 🛠️ Tech Stack
 
-* **Frontend:** Streamlit
-* **AI Model:** Groq (Llama 3.1)
-* **Weather API:** OpenWeatherMap
-* **Document Processing:** PyPDF2
-* **Programming Language:** Python
+* Frontend: Streamlit
+* AI Model: OpenAI GPT-OSS-20B (served through Groq)
+* LLM Integration: LangChain (ChatGroq)
+* Weather API: OpenWeatherMap
+* Document Processing: PyPDF2
+* Programming Language: Python
 
 ## 🔑 Required API Keys
 
 ### Groq API
 
+Wandr AI uses the OpenAI GPT-OSS-20B model hosted on Groq
+for AI-powered travel assistance.
+
 Used for:
 
-* Travel recommendations
-* Itinerary generation
-* Conversational AI responses
+* AI-powered travel recommendations
+* Personalized itinerary generation
+* Conversational travel assistance
+* Extracting destination information from user queries
+* PDF-based question answering
 
 ### OpenWeatherMap API
 
